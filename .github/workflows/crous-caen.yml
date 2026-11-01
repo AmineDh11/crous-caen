@@ -1,0 +1,39 @@
+name: CROUS Caen watcher
+# Runs one check every ~5 minutes on GitHub's servers (free on a PUBLIC repo),
+# so alerts keep coming even when your laptop is off.
+# Setup: repo Settings > Secrets and variables > Actions > New secret NTFY_TOPIC
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crous-caen
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: One check
+        env:
+          RUN_ONCE: "1"
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          RESIDENCE_FILTER: ${{ vars.RESIDENCE_FILTER }}
+          MAX_RENT_EUR: ${{ vars.MAX_RENT_EUR || '0' }}
+        run: python crous_caen_watch.py
+      - name: Save state (so the next run knows what was already seen)
+        run: |
+          git config user.name "crous-bot"
+          git config user.email "crous-bot@users.noreply.github.com"
+          git add crous_caen_state.json || true
+          git diff --cached --quiet || (git commit -m "state" && git push)
