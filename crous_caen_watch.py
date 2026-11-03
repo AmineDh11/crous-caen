@@ -210,6 +210,33 @@ def fetch_listings(tool: dict) -> list[dict]:
         page += 1
 
 
+AVAIL_URL = BASE + "/api/fr/tools/{tool_id}/accommodations/{item_id}/availabilities"
+DEPARTURE_DATE = _env("DEPARTURE_DATE", "2027-06-30")
+
+
+def free_periods(tool_id, item: dict) -> list | None:
+    """Périodes réellement réservables d'un logement (None si la vérif échoue).
+    Une annonce peut rester affichée alors qu'elle est déjà prise : seul ce
+    contrôle dit si on peut vraiment réserver."""
+    from datetime import date, timedelta
+    modes = [m.get("type") for m in (item.get("occupationModes") or []) if isinstance(m, dict)]
+    mode = "alone" if "alone" in modes else (modes[0] if modes else "alone")
+    arrival = max(date.today() + timedelta(days=2), date(2026, 11, 5))
+    departure = date.fromisoformat(DEPARTURE_DATE)
+    if departure < arrival + timedelta(days=31):
+        departure = arrival + timedelta(days=60)
+    try:
+        r = requests.get(AVAIL_URL.format(tool_id=tool_id, item_id=item.get("id")),
+                         params={"occupationMode": mode, "arrivalDate": arrival.isoformat(),
+                                 "departureDate": departure.isoformat()},
+                         headers=HEADERS, timeout=TIMEOUT)
+        r.raise_for_status()
+        periods = r.json().get("periodsAvailable")
+        return periods if isinstance(periods, list) else None
+    except (requests.RequestException, ValueError):
+        return None
+
+
 def france_total(tool: dict) -> int:
     """Nombre total d'annonces en France métropolitaine pour cette phase
     (sert à vérifier que la recherche fonctionne vraiment)."""
@@ -301,16 +328,44 @@ def run_cycle(state: dict) -> dict:
                 continue
         else:
             current_new = current - set(seen[key])
-        hits = [i for i in items if str(i.get("id")) in current_new and wanted(i)]
-        for item in hits:
+        # Alert only when a room is really bookable (new listing OR a taken
+        # room that frees up again). If the check fails, fall back to the
+        # old "new listing" alert so nothing is missed.
+        bookable_state: dict = state.setdefault("bookable", {})
+        before = set(bookable_state.get(key, []))
+        bookable_now = set()
+        alerts = 0
+        for item in items:
+            iid = str(item.get("id"))
+            if not wanted(item):
+                continue
+            periods = free_periods(key, item)
             name, residence, _, rent = describe(item)
             link = LISTING_URL.format(tool_id=key, item_id=item.get("id"))
-            log(f"NEW -> {name} | {residence} | {rent} | {link}")
-            notify(f"Logement CROUS libre : {residence}",
-                   f"{name}\nLoyer : {rent}\nRéserve MAINTENANT (1er arrivé, 1er servi).",
-                   link=link, priority=5, tags=["house", "rotating_light"])
-        if not hits:
-            log(f"Phase {key}: no new listing ({len(current)} online).")
+            if periods is None:
+                if iid in current_new:
+                    log(f"NEW (availability unknown) -> {name} | {residence} | {rent}")
+                    notify(f"Nouvelle annonce CROUS : {residence}",
+                           f"{name}\nLoyer : {rent}\nDisponibilité non vérifiée : ouvre vite.",
+                           link=link, priority=4, tags=["house"])
+                    alerts += 1
+                continue
+            if periods:
+                bookable_now.add(iid)
+                if iid not in before:
+                    p = periods[0]
+                    start = str(p.get("arrivalDate", ""))[:10]
+                    end = str(p.get("departureDate", ""))[:10]
+                    log(f"BOOKABLE -> {name} | {residence} | {rent} | {start}->{end} | {link}")
+                    notify(f"RÉSERVABLE MAINTENANT : {residence}",
+                           f"{name}\nLoyer : {rent}\nDu {start} au {end}\nOuvre et réserve tout de suite !",
+                           link=link, priority=5, tags=["house", "rotating_light"])
+                    alerts += 1
+            elif iid in current_new:
+                log(f"New listing already taken -> {name} | {residence}")
+        bookable_state[key] = sorted(bookable_now)
+        if not alerts:
+            log(f"Phase {key}: {len(current)} listed, {len(bookable_now)} bookable, nothing new.")
         seen[key] = sorted(set(seen[key]) | current)
 
         # Self-check, once per phase: does the search find anything in France?
