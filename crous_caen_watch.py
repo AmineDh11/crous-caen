@@ -210,6 +210,21 @@ def fetch_listings(tool: dict) -> list[dict]:
         page += 1
 
 
+def france_total(tool: dict) -> int:
+    """Nombre total d'annonces en France métropolitaine pour cette phase
+    (sert à vérifier que la recherche fonctionne vraiment)."""
+    body = search_payload(tool, 1)
+    body["pageSize"] = 1
+    body["location"] = [{"lon": -5.5, "lat": 51.2}, {"lon": 9.8, "lat": 41.2}]
+    r = requests.post(SEARCH_URL.format(tool_id=tool["id"]), json=body,
+                      headers=HEADERS, timeout=TIMEOUT)
+    r.raise_for_status()
+    total = (r.json().get("results") or {}).get("total", 0)
+    if isinstance(total, dict):
+        total = total.get("value", 0)
+    return int(total or 0)
+
+
 def describe(item: dict) -> tuple[str, str, float | None, str]:
     """(nom, résidence, loyer_min_euros, loyer_texte)"""
     name = item.get("label") or "Logement"
@@ -297,6 +312,26 @@ def run_cycle(state: dict) -> dict:
         if not hits:
             log(f"Phase {key}: no new listing ({len(current)} online).")
         seen[key] = sorted(set(seen[key]) | current)
+
+        # Self-check, once per phase: does the search find anything in France?
+        diag = state.setdefault("diag_sent", [])
+        if key not in diag:
+            try:
+                fr = france_total(tool)
+            except (requests.RequestException, ValueError) as e:
+                log(f"France-wide check failed: {e}")
+            else:
+                log(f"Phase {key}: {fr} listing(s) France-wide, {len(current)} in Caen.")
+                if fr > 0:
+                    msg = (f"La recherche fonctionne : {fr} logement(s) en ligne en France, "
+                           f"{len(current)} à Caen/Hérouville pour l'instant.")
+                else:
+                    msg = ("0 logement en ligne dans toute la France pour cette phase. "
+                           "Soit rien n'est encore publié, soit la recherche ne marche plus : "
+                           "vérifie le site à la main.")
+                notify("CROUS : vérification de la recherche", msg,
+                       link=BASE + "/", priority=3, tags=["mag"])
+                diag.append(key)
 
     if not state.get("initialised"):
         state["initialised"] = True
