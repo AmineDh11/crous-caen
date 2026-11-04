@@ -85,6 +85,31 @@ STUDY_LON = float(_env("STUDY_LON", "-0.3683"))
 STUDY_NAME = _env("STUDY_NAME", "Campus 2")
 EXCLUDE_PMR = _env("EXCLUDE_PMR", "1") == "1"        # logements adaptés PMR
 EXCLUDE_COUPLE_ONLY = _env("EXCLUDE_COUPLE_ONLY", "1") == "1"
+# Your pending request (0 = none). Alerts then say whether switching is worth it.
+CURRENT_RENT_EUR = float(_env("CURRENT_RENT_EUR", "0") or 0)
+CURRENT_DIST_KM = float(_env("CURRENT_DIST_KM", "0") or 0)
+CURRENT_LABEL = _env("CURRENT_LABEL", "ta demande actuelle")
+SWITCH_MIN_SAVING_EUR = float(_env("SWITCH_MIN_SAVING_EUR", "50"))
+
+
+def switch_advice(rent: float | None, dist: float | None,
+                  shared: bool = False) -> tuple[str, bool]:
+    """(texte, vaut_le_coup) en comparant avec la demande en cours."""
+    if CURRENT_RENT_EUR <= 0 or rent is None:
+        return "", True
+    if shared:
+        return f"✋ Colocation (partagée) : pas mieux que {CURRENT_LABEL}, garde ta demande.", False
+    saving = CURRENT_RENT_EUR - rent
+    closer = dist is not None and CURRENT_DIST_KM > 0 and dist < CURRENT_DIST_KM - 1.0
+    if saving >= SWITCH_MIN_SAVING_EUR or (saving >= 0 and closer):
+        why = f"{saving:.0f} €/mois de moins" if saving >= 1 else "même prix"
+        if closer:
+            why += ", bien plus près"
+        return (f"💡 CHANGE : {why} que {CURRENT_LABEL} ({CURRENT_RENT_EUR:.0f} €). "
+                f"Annule ta demande dans « Mon dossier » puis réserve ici."), True
+    if saving > 0:
+        return f"≈ {saving:.0f} €/mois de moins que {CURRENT_LABEL} : pas assez pour changer.", False
+    return f"✋ Pas mieux que {CURRENT_LABEL} ({CURRENT_RENT_EUR:.0f} €) : garde ta demande.", False
 
 # --- Request budget (be gentle with the Crous servers) -----------------------
 # Every run does 1 cheap search: new listings are seen within one cron tick.
@@ -530,11 +555,15 @@ def run_cycle(state: dict) -> dict:
             shared = "" if "alone" in _modes(item) else " · ⚠ colocation (logement partagé)"
             rank_txt = f"Choix n°{rank} sur {len(fresh)}" if len(fresh) > 1 else "Seul logement libre"
             short = re.sub(r"^(RESIDENCE|CITE U\.|CITE)\s+", "", residence.upper()).title()
-            log(f"BOOKABLE -> {stars} {s} | {name} | {residence} | {rent} | {trip} | {link}")
-            notify(f"{stars} · {short} · {rent}",
+            advice, worth = switch_advice(describe(item)[2], distance_km(item),
+                                          shared="alone" not in _modes(item))
+            action = (f"👉 {rank_txt} — réserve tout de suite" if not advice
+                      else f"👉 {advice}")
+            log(f"BOOKABLE -> {stars} {s} | {name} | {residence} | {rent} | {trip} | {link} | worth={worth}")
+            notify(f"{'💡 ' if advice and worth else ''}{stars} · {short} · {rent}",
                    f"{room_kind(item)}{size}{shared}\n📍 {trip}\n📅 Libre du {fmt(p.get('arrivalDate'))} "
-                   f"au {fmt(p.get('departureDate'))}\n👉 {rank_txt} — réserve tout de suite",
-                   link=link, priority=5 if s >= 55 else 4, tags=["house"])
+                   f"au {fmt(p.get('departureDate'))}\n{action}",
+                   link=link, priority=(5 if s >= 55 else 4) if worth else 2, tags=["house"])
             alerts += 1
         bookable_state[key] = sorted(bookable_now)
         state["events"] = events[-1000:]
