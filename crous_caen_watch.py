@@ -36,6 +36,7 @@ Basé sur la méthode du projet public github.com/sofiane200206/crous-script (Ro
 
 import json
 import os
+import re
 import sys
 import time
 from datetime import datetime, timezone
@@ -78,6 +79,12 @@ BBOX_LAT_SOUTH = float(_env("BBOX_LAT_SOUTH", "49.145"))
 RESIDENCE_FILTER = _env("RESIDENCE_FILTER", "")
 # Loyer max en euros (0 = pas de limite)
 MAX_RENT_EUR = float(_env("MAX_RENT_EUR", "0"))
+# Lieu d'études pour le classement (défaut : Campus 2, bd Maréchal Juin)
+STUDY_LAT = float(_env("STUDY_LAT", "49.2135"))
+STUDY_LON = float(_env("STUDY_LON", "-0.3683"))
+STUDY_NAME = _env("STUDY_NAME", "Campus 2")
+EXCLUDE_PMR = _env("EXCLUDE_PMR", "1") == "1"        # logements adaptés PMR
+EXCLUDE_COUPLE_ONLY = _env("EXCLUDE_COUPLE_ONLY", "1") == "1"
 
 NTFY_TOPIC = _env("NTFY_TOPIC", "crous-caen-CHANGE-ME")
 NTFY_URL = _env("NTFY_URL", "https://ntfy.sh")
@@ -309,7 +316,66 @@ def describe(item: dict) -> tuple[str, str, float | None, str]:
     return str(name), str(residence), rent_min, rent_txt
 
 
+def _modes(item: dict) -> list[str]:
+    return [m.get("type") for m in (item.get("occupationModes") or []) if isinstance(m, dict)]
+
+
+def distance_km(item: dict) -> float | None:
+    import math
+    loc = (item.get("residence") or {}).get("location") or {}
+    try:
+        lat, lon = float(loc["lat"]), float(loc["lon"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    dy = (lat - STUDY_LAT) * 111.2
+    dx = (lon - STUDY_LON) * 111.2 * math.cos(math.radians(STUDY_LAT))
+    return math.hypot(dx, dy)
+
+
+def room_kind(item: dict) -> str:
+    """Type lisible : Studio, Chambre confort, Chambre simple, T1 bis, T2…"""
+    import re
+    label = (item.get("label") or "").upper()
+    equip = {(e.get("label") if isinstance(e, dict) else str(e)) or ""
+             for e in (item.get("equipments") or [])}
+    if re.search(r"\bT2\b", label):
+        return "T2 (2 pièces)"
+    if re.search(r"\bT1 ?BIS\b", label):
+        return "T1 bis (grand studio)"
+    if "STUDIO" in label or re.search(r"\bT1\b", label) or "Evier + plaque" in equip:
+        return "Studio (kitchenette, WC/douche)"
+    if "CONFORT" in label or {"WC", "Douche"} <= equip:
+        return "Chambre confort (WC/douche privés, cuisine commune)"
+    return "Chambre simple (sanitaires + cuisine communs)"
+
+
+def score(item: dict) -> tuple[int, str, str]:
+    """(score 0-100, étoiles, ligne trajet). Plus c'est haut, mieux c'est."""
+    d = distance_km(item)
+    _, _, rent, _ = describe(item)
+    kind = room_kind(item)
+    s = 0
+    if d is None:
+        s += 20; trip = "distance inconnue"
+    else:
+        walk = round(d * 13)  # ~4,6 km/h
+        trip = f"{d:.1f} km du {STUDY_NAME} (~{walk} min à pied)".replace(".", ",", 1)
+        s += 50 if d <= 0.8 else 32 if d <= 2.2 else 22 if d <= 3.2 else 10
+    if rent is not None:
+        s += 30 if rent <= 300 else 22 if rent <= 400 else 12 if rent <= 480 else 5
+    s += {"Studio": 20, "T1 bis": 15, "Chambre confort": 12, "T2": 8}.get(kind.split(" (")[0], 6)
+    if "alone" not in _modes(item):
+        s -= 30  # colocation : on partage avec quelqu'un
+    stars = "⭐⭐⭐ TOP" if s >= 75 else "⭐⭐ BON" if s >= 55 else "⭐ OK"
+    return s, stars, trip
+
+
 def wanted(item: dict) -> bool:
+    modes = _modes(item)
+    if EXCLUDE_PMR and item.get("adaptedPmr"):
+        return False
+    if EXCLUDE_COUPLE_ONLY and modes and set(modes) <= {"couple"}:
+        return False
     _, residence, rent_min, _ = describe(item)
     if RESIDENCE_FILTER.strip():
         keys = [_norm(k) for k in RESIDENCE_FILTER.split(",") if k.strip()]
@@ -368,6 +434,7 @@ def run_cycle(state: dict) -> dict:
         bookable_state: dict = state.setdefault("bookable", {})
         before = set(bookable_state.get(key, []))
         bookable_now = set()
+        fresh: list = []
         alerts = 0
         rows = []
         events = state.setdefault("events", [])
@@ -396,16 +463,28 @@ def run_cycle(state: dict) -> dict:
             if periods:
                 bookable_now.add(iid)
                 if iid not in before:
-                    p = periods[0]
-                    start = str(p.get("arrivalDate", ""))[:10]
-                    end = str(p.get("departureDate", ""))[:10]
-                    log(f"BOOKABLE -> {name} | {residence} | {rent} | {start}->{end} | {link}")
-                    notify(f"RÉSERVABLE MAINTENANT : {residence}",
-                           f"{name}\nLoyer : {rent}\nDu {start} au {end}\nOuvre et réserve tout de suite !",
-                           link=link, priority=5, tags=["house", "rotating_light"])
-                    alerts += 1
+                    fresh.append((item, periods))
             elif iid in current_new:
                 log(f"New listing already taken -> {name} | {residence}")
+        # Best first, so the top choice is the first notification you see.
+        fresh.sort(key=lambda x: -score(x[0])[0])
+        for rank, (item, periods) in enumerate(fresh, 1):
+            name, residence, _, rent = describe(item)
+            s, stars, trip = score(item)
+            link = LISTING_URL.format(tool_id=key, item_id=item.get("id"))
+            p = periods[0]
+            fmt = lambda v: "/".join(reversed(str(v)[:10].split("-")))
+            area = item.get("area") or {}
+            size = f" · {area.get('min'):g} m²" if area.get("min") else ""
+            shared = "" if "alone" in _modes(item) else " · ⚠ colocation (logement partagé)"
+            rank_txt = f"Choix n°{rank} sur {len(fresh)}" if len(fresh) > 1 else "Seul logement libre"
+            short = re.sub(r"^(RESIDENCE|CITE U\.|CITE)\s+", "", residence.upper()).title()
+            log(f"BOOKABLE -> {stars} {s} | {name} | {residence} | {rent} | {trip} | {link}")
+            notify(f"{stars} · {short} · {rent}",
+                   f"{room_kind(item)}{size}{shared}\n📍 {trip}\n📅 Libre du {fmt(p.get('arrivalDate'))} "
+                   f"au {fmt(p.get('departureDate'))}\n👉 {rank_txt} — réserve tout de suite",
+                   link=link, priority=5 if s >= 55 else 4, tags=["house"])
+            alerts += 1
         bookable_state[key] = sorted(bookable_now)
         state["events"] = events[-1000:]
         write_snapshot(key, rows)
