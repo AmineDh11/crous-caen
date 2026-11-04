@@ -86,6 +86,16 @@ STUDY_NAME = _env("STUDY_NAME", "Campus 2")
 EXCLUDE_PMR = _env("EXCLUDE_PMR", "1") == "1"        # logements adaptés PMR
 EXCLUDE_COUPLE_ONLY = _env("EXCLUDE_COUPLE_ONLY", "1") == "1"
 
+# --- Request budget (be gentle with the Crous servers) -----------------------
+# Every run does 1 cheap search: new listings are seen within one cron tick.
+# The per-room availability sweep (catches cancellations) is spaced out:
+# every FAST_SWEEP_MIN during office hours, every SLOW_SWEEP_MIN otherwise.
+FAST_SWEEP_MIN = int(_env("FAST_SWEEP_MIN", "5"))
+SLOW_SWEEP_MIN = int(_env("SLOW_SWEEP_MIN", "20"))
+TOOLS_CACHE_MIN = int(_env("TOOLS_CACHE_MIN", "5"))   # phase list rarely changes
+FAST_HOURS = (9, 19)          # Paris time, [start, end)
+FAST_WEEKDAYS = range(0, 5)   # Monday..Friday
+
 NTFY_TOPIC = _env("NTFY_TOPIC", "crous-caen-CHANGE-ME")
 NTFY_URL = _env("NTFY_URL", "https://ntfy.sh")
 
@@ -387,9 +397,41 @@ def wanted(item: dict) -> bool:
 
 
 # ============================== CYCLE ========================================
+def paris_now() -> datetime:
+    from zoneinfo import ZoneInfo
+    return datetime.now(ZoneInfo("Europe/Paris"))
+
+
+def in_fast_window(t: datetime) -> bool:
+    return t.weekday() in FAST_WEEKDAYS and FAST_HOURS[0] <= t.hour < FAST_HOURS[1]
+
+
+def minutes_since(iso: str | None) -> float:
+    t = _parse_dt(iso)
+    if t is None:
+        return float("inf")
+    return (datetime.now(timezone.utc) - t).total_seconds() / 60
+
+
+def current_tools(state: dict) -> list[dict]:
+    """Active phases, re-read from the site at most every TOOLS_CACHE_MIN."""
+    cache = state.get("tools_cache") or {}
+    if cache.get("tools") is not None and minutes_since(cache.get("t")) < TOOLS_CACHE_MIN:
+        now = datetime.now(timezone.utc)
+        return [t for t in cache["tools"]
+                if not (_parse_dt(t.get("endDate")) and now >= _parse_dt(t.get("endDate")))]
+    tools = active_tools()
+    state["tools_cache"] = {
+        "t": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "tools": [{k: t.get(k) for k in ("id", "name", "mechanism", "startDate", "endDate")}
+                  for t in tools],
+    }
+    return tools
+
+
 def run_cycle(state: dict) -> dict:
     try:
-        tools = active_tools()
+        tools = current_tools(state)
     except (requests.RequestException, ValueError) as e:
         log(f"Cannot read phases ({e}); retry next cycle.")
         return state
@@ -439,11 +481,20 @@ def run_cycle(state: dict) -> dict:
         rows = []
         events = state.setdefault("events", [])
         now_iso = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        sweeps: dict = state.setdefault("last_sweep", {})
+        interval = FAST_SWEEP_MIN if in_fast_window(paris_now()) else SLOW_SWEEP_MIN
+        full = minutes_since(sweeps.get(key)) >= interval
+        checked = 0
         for item in items:
             iid = str(item.get("id"))
             if not wanted(item):
                 continue
+            if not full and iid not in current_new:
+                if iid in before:          # keep last known status until next sweep
+                    bookable_now.add(iid)
+                continue
             periods = free_periods(key, item)
+            checked += 1
             rows.append(snapshot_row(item, periods))
             if iid in current_new:
                 events.append({"t": now_iso, "id": iid, "e": "listed",
@@ -487,9 +538,12 @@ def run_cycle(state: dict) -> dict:
             alerts += 1
         bookable_state[key] = sorted(bookable_now)
         state["events"] = events[-1000:]
-        write_snapshot(key, rows)
+        if full:
+            sweeps[key] = now_iso
+            write_snapshot(key, rows)
+        mode = f"full sweep ({checked} rooms checked)" if full else f"quick ({checked} new checked)"
         if not alerts:
-            log(f"Phase {key}: {len(current)} listed, {len(bookable_now)} bookable, nothing new.")
+            log(f"Phase {key}: {len(current)} listed, {len(bookable_now)} bookable, nothing new — {mode}.")
         seen[key] = sorted(set(seen[key]) | current)
 
         # Self-check, once per phase: does the search find anything in France?
