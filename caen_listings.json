@@ -145,8 +145,18 @@
     }
    ],
    "equipments": [],
-   "bookable": false,
-   "periods": [],
+   "bookable": true,
+   "periods": [
+    {
+     "arrivalDate": "2026-11-06T00:00:00+01:00",
+     "departureDate": "2027-06-30T00:00:00+02:00",
+     "quota": {
+      "id": 184,
+      "name": "Fil de l'eau"
+     },
+     "duration": 236
+    }
+   ],
    "residence": {
     "publicTransports": [
      {
