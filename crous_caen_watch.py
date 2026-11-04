@@ -237,6 +237,40 @@ def free_periods(tool_id, item: dict) -> list | None:
         return None
 
 
+SNAPSHOT_FILE = Path(__file__).with_name("caen_listings.json")
+
+
+def snapshot_row(item: dict, periods) -> dict:
+    """Compact public description of a listing, saved for analysis."""
+    res = item.get("residence") if isinstance(item.get("residence"), dict) else {}
+    res_small = {k: v for k, v in res.items()
+                 if k not in ("description", "medias", "parkings", "services")}
+    for t in res_small.get("publicTransports") or []:
+        if isinstance(t, dict):
+            t.pop("id", None)
+    return {
+        "id": item.get("id"), "label": item.get("label"), "area": item.get("area"),
+        "roomCount": item.get("roomCount"), "bedCount": item.get("bedCount"),
+        "adaptedPmr": item.get("adaptedPmr"),
+        "occupationModes": item.get("occupationModes"),
+        "equipments": [e.get("label") if isinstance(e, dict) else e
+                       for e in (item.get("equipments") or [])],
+        "bookable": bool(periods), "periods": periods,
+        "residence": res_small,
+    }
+
+
+def write_snapshot(tool_id, rows: list) -> None:
+    data = {"tool": tool_id, "listings": sorted(rows, key=lambda r: r["id"] or 0)}
+    text = json.dumps(data, ensure_ascii=False, indent=1, default=str)
+    try:
+        if SNAPSHOT_FILE.is_file() and SNAPSHOT_FILE.read_text(encoding="utf-8") == text:
+            return
+        SNAPSHOT_FILE.write_text(text, encoding="utf-8")
+    except OSError as e:
+        log(f"Snapshot write failed: {e}")
+
+
 def france_total(tool: dict) -> int:
     """Nombre total d'annonces en France métropolitaine pour cette phase
     (sert à vérifier que la recherche fonctionne vraiment)."""
@@ -335,11 +369,20 @@ def run_cycle(state: dict) -> dict:
         before = set(bookable_state.get(key, []))
         bookable_now = set()
         alerts = 0
+        rows = []
+        events = state.setdefault("events", [])
+        now_iso = datetime.now(timezone.utc).isoformat(timespec="seconds")
         for item in items:
             iid = str(item.get("id"))
             if not wanted(item):
                 continue
             periods = free_periods(key, item)
+            rows.append(snapshot_row(item, periods))
+            if iid in current_new:
+                events.append({"t": now_iso, "id": iid, "e": "listed",
+                               "bookable": bool(periods)})
+            elif periods and iid not in before:
+                events.append({"t": now_iso, "id": iid, "e": "freed"})
             name, residence, _, rent = describe(item)
             link = LISTING_URL.format(tool_id=key, item_id=item.get("id"))
             if periods is None:
@@ -364,6 +407,8 @@ def run_cycle(state: dict) -> dict:
             elif iid in current_new:
                 log(f"New listing already taken -> {name} | {residence}")
         bookable_state[key] = sorted(bookable_now)
+        state["events"] = events[-1000:]
+        write_snapshot(key, rows)
         if not alerts:
             log(f"Phase {key}: {len(current)} listed, {len(bookable_now)} bookable, nothing new.")
         seen[key] = sorted(set(seen[key]) | current)
