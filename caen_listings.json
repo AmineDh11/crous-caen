@@ -2,6 +2,78 @@
  "tool": "48",
  "listings": [
   {
+   "id": 1406,
+   "label": "STUDIO LEBISEY 20M CP",
+   "area": {
+    "min": 20.0,
+    "max": 20.0
+   },
+   "roomCount": 1,
+   "bedCount": 2,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 46732,
+      "max": 46732
+     }
+    },
+    {
+     "type": "couple",
+     "rent": {
+      "min": 46732,
+      "max": 46732
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": true,
+   "periods": [
+    {
+     "arrivalDate": "2026-11-06T00:00:00+01:00",
+     "departureDate": "2027-06-30T00:00:00+02:00",
+     "quota": {
+      "id": 184,
+      "name": "Fil de l'eau"
+     },
+     "duration": 236
+    }
+   ],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 2,
+      "unitOfMeasure": "on_foot",
+      "description": "lignes 5, 10, 19, 24, 25, 28 et 31.Réseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 9,
+    "uairne": "0141281S",
+    "address": "114, 116 rue de Lebisey 14000 CAEN",
+    "location": {
+     "lon": -0.352,
+     "lat": 49.199
+    },
+    "sharedTransports": [],
+    "id": "b6fd3dfc-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "CITE U. LEBISEY"
+   }
+  },
+  {
    "id": 1431,
    "label": "T1 BIS BACOT 30M CL",
    "area": {
@@ -61,6 +133,68 @@
      "id": 24
     },
     "label": "RESIDENCE BACOT"
+   }
+  },
+  {
+   "id": 3050,
+   "label": "T1 LEBISEY 20M CP",
+   "area": {
+    "min": 20.0,
+    "max": 20.0
+   },
+   "roomCount": 1,
+   "bedCount": 2,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 46732,
+      "max": 46732
+     }
+    },
+    {
+     "type": "couple",
+     "rent": {
+      "min": 46732,
+      "max": 46732
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 2,
+      "unitOfMeasure": "on_foot",
+      "description": "lignes 5, 10, 19, 24, 25, 28 et 31.Réseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 9,
+    "uairne": "0141281S",
+    "address": "114, 116 rue de Lebisey 14000 CAEN",
+    "location": {
+     "lon": -0.352,
+     "lat": 49.199
+    },
+    "sharedTransports": [],
+    "id": "b6fd3dfc-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "CITE U. LEBISEY"
    }
   }
  ]
