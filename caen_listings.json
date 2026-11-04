@@ -1,0 +1,682 @@
+{
+ "tool": "48",
+ "listings": [
+  {
+   "id": 94,
+   "label": "STUDIO BRETON 23M PMR",
+   "area": {
+    "min": 20.0,
+    "max": 20.0
+   },
+   "roomCount": 1,
+   "bedCount": 1,
+   "adaptedPmr": true,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 39990,
+      "max": 39990
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "ignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 2,
+    "uairne": "0142222P",
+    "address": "AVENUE DE LA GRANDE CAVEE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.202
+    },
+    "sharedTransports": [],
+    "id": "b7fc792f-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "RESIDENCE ANDRE BRETON"
+   }
+  },
+  {
+   "id": 108,
+   "label": "T1 TRISTAN 20M PMR",
+   "area": {
+    "min": 20.0,
+    "max": 20.0
+   },
+   "roomCount": 1,
+   "bedCount": 1,
+   "adaptedPmr": true,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 38747,
+      "max": 38747
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "lignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 1,
+    "uairne": "0142223R",
+    "address": "AVENUE DE LA GRANDE CAVEE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.202
+    },
+    "sharedTransports": [],
+    "id": "b99a556f-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "RESIDENCE FLORA TRISTAN"
+   }
+  },
+  {
+   "id": 1398,
+   "label": "T1 BIS GREMILLON 30M CP",
+   "area": {
+    "min": 22.5,
+    "max": 33.0
+   },
+   "roomCount": 1,
+   "bedCount": 2,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 42533,
+      "max": 42533
+     }
+    },
+    {
+     "type": "couple",
+     "rent": {
+      "min": 42533,
+      "max": 42533
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "lignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne  B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 4,
+    "uairne": "0142238G",
+    "address": "AVENUE DE LA VALEUSE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.203
+    },
+    "sharedTransports": [],
+    "id": "b6e23df6-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "CITE GREMILLON"
+   }
+  },
+  {
+   "id": 1406,
+   "label": "STUDIO LEBISEY 20M CP",
+   "area": {
+    "min": 20.0,
+    "max": 20.0
+   },
+   "roomCount": 1,
+   "bedCount": 2,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 46732,
+      "max": 46732
+     }
+    },
+    {
+     "type": "couple",
+     "rent": {
+      "min": 46732,
+      "max": 46732
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 2,
+      "unitOfMeasure": "on_foot",
+      "description": "lignes 5, 10, 19, 24, 25, 28 et 31.Réseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 9,
+    "uairne": "0141281S",
+    "address": "114, 116 rue de Lebisey 14000 CAEN",
+    "location": {
+     "lon": -0.352,
+     "lat": 49.199
+    },
+    "sharedTransports": [],
+    "id": "b6fd3dfc-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "CITE U. LEBISEY"
+   }
+  },
+  {
+   "id": 1423,
+   "label": "STUDIO BRETON 32M CP",
+   "area": {
+    "min": 33.0,
+    "max": 33.0
+   },
+   "roomCount": 1,
+   "bedCount": 2,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 47861,
+      "max": 47861
+     }
+    },
+    {
+     "type": "couple",
+     "rent": {
+      "min": 47861,
+      "max": 47861
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "ignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 2,
+    "uairne": "0142222P",
+    "address": "AVENUE DE LA GRANDE CAVEE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.202
+    },
+    "sharedTransports": [],
+    "id": "b7fc792f-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "RESIDENCE ANDRE BRETON"
+   }
+  },
+  {
+   "id": 1446,
+   "label": "T1 BIS TRISTAN 32M CP",
+   "area": {
+    "min": 33.0,
+    "max": 33.0
+   },
+   "roomCount": 1,
+   "bedCount": 2,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 47861,
+      "max": 47861
+     }
+    },
+    {
+     "type": "couple",
+     "rent": {
+      "min": 47861,
+      "max": 47861
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "lignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 1,
+    "uairne": "0142223R",
+    "address": "AVENUE DE LA GRANDE CAVEE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.202
+    },
+    "sharedTransports": [],
+    "id": "b99a556f-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "RESIDENCE FLORA TRISTAN"
+   }
+  },
+  {
+   "id": 1449,
+   "label": "T2 TRISTAN 50M CP",
+   "area": {
+    "min": 46.0,
+    "max": 46.0
+   },
+   "roomCount": 2,
+   "bedCount": 2,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "couple",
+     "rent": {
+      "min": 57702,
+      "max": 57702
+     }
+    }
+   ],
+   "equipments": [
+    "Pièce à vivre",
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": null,
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "lignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 1,
+    "uairne": "0142223R",
+    "address": "AVENUE DE LA GRANDE CAVEE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.202
+    },
+    "sharedTransports": [],
+    "id": "b99a556f-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "RESIDENCE FLORA TRISTAN"
+   }
+  },
+  {
+   "id": 1963,
+   "label": "Chambre simple GREMILLON",
+   "area": {
+    "min": 9.0,
+    "max": 9.0
+   },
+   "roomCount": 1,
+   "bedCount": 1,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 26577,
+      "max": 26577
+     }
+    }
+   ],
+   "equipments": [],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "lignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne  B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 4,
+    "uairne": "0142238G",
+    "address": "AVENUE DE LA VALEUSE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.203
+    },
+    "sharedTransports": [],
+    "id": "b6e23df6-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "CITE GREMILLON"
+   }
+  },
+  {
+   "id": 1982,
+   "label": "Chambre simple LEBISEY",
+   "area": {
+    "min": 9.0,
+    "max": 9.0
+   },
+   "roomCount": 1,
+   "bedCount": 1,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 25586,
+      "max": 25586
+     }
+    }
+   ],
+   "equipments": [],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 2,
+      "unitOfMeasure": "on_foot",
+      "description": "lignes 5, 10, 19, 24, 25, 28 et 31.Réseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 9,
+    "uairne": "0141281S",
+    "address": "114, 116 rue de Lebisey 14000 CAEN",
+    "location": {
+     "lon": -0.352,
+     "lat": 49.199
+    },
+    "sharedTransports": [],
+    "id": "b6fd3dfc-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "CITE U. LEBISEY"
+   }
+  },
+  {
+   "id": 2030,
+   "label": "STUDIO BRETON 20M",
+   "area": {
+    "min": 20.0,
+    "max": 20.0
+   },
+   "roomCount": 1,
+   "bedCount": 1,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 39990,
+      "max": 39990
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "ignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 2,
+    "uairne": "0142222P",
+    "address": "AVENUE DE LA GRANDE CAVEE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.202
+    },
+    "sharedTransports": [],
+    "id": "b7fc792f-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "RESIDENCE ANDRE BRETON"
+   }
+  },
+  {
+   "id": 2076,
+   "label": "T1 TRISTAN 20M",
+   "area": {
+    "min": 20.0,
+    "max": 20.0
+   },
+   "roomCount": 1,
+   "bedCount": 1,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 38747,
+      "max": 38747
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "lignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 1,
+    "uairne": "0142223R",
+    "address": "AVENUE DE LA GRANDE CAVEE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.202
+    },
+    "sharedTransports": [],
+    "id": "b99a556f-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "RESIDENCE FLORA TRISTAN"
+   }
+  },
+  {
+   "id": 2846,
+   "label": "Chambre confort GREMILLON",
+   "area": {
+    "min": 9.0,
+    "max": 9.0
+   },
+   "roomCount": 1,
+   "bedCount": 1,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "alone",
+     "rent": {
+      "min": 28017,
+      "max": 28017
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 20,
+      "unitOfMeasure": "metre",
+      "description": "lignes 4,9 et 14 et noctibus (bus de nuit le jeudi, vendredi et samedi pour Caen)\r\nRéseau de substitution du tram : Ligne  B",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 4,
+    "uairne": "0142238G",
+    "address": "AVENUE DE LA VALEUSE 14200 HEROUVILLE SAINT-CLAIR",
+    "location": {
+     "lon": -0.337,
+     "lat": 49.203
+    },
+    "sharedTransports": [],
+    "id": "b6e23df6-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "CITE GREMILLON"
+   }
+  }
+ ]
+}
