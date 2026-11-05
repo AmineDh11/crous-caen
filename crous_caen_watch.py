@@ -90,6 +90,8 @@ CURRENT_RENT_EUR = float(_env("CURRENT_RENT_EUR", "0") or 0)
 CURRENT_DIST_KM = float(_env("CURRENT_DIST_KM", "0") or 0)
 CURRENT_LABEL = _env("CURRENT_LABEL", "ta demande actuelle")
 SWITCH_MIN_SAVING_EUR = float(_env("SWITCH_MIN_SAVING_EUR", "50"))
+# Only notify rooms scoring at least this (75 = ⭐⭐⭐ TOP, 55 = ⭐⭐, 0 = all)
+MIN_ALERT_SCORE = int(_env("MIN_ALERT_SCORE", "0") or 0)
 
 
 def switch_advice(rent: float | None, dist: float | None,
@@ -555,6 +557,9 @@ def run_cycle(state: dict) -> dict:
             shared = "" if "alone" in _modes(item) else " · ⚠ colocation (logement partagé)"
             rank_txt = f"Choix n°{rank} sur {len(fresh)}" if len(fresh) > 1 else "Seul logement libre"
             short = re.sub(r"^(RESIDENCE|CITE U\.|CITE)\s+", "", residence.upper()).title()
+            if s < MIN_ALERT_SCORE:
+                log(f"Bookable but below alert level ({s} < {MIN_ALERT_SCORE}) -> {name} | {residence} | {rent}")
+                continue
             advice, worth = switch_advice(describe(item)[2], distance_km(item),
                                           shared="alone" not in _modes(item))
             action = (f"👉 {rank_txt} — réserve tout de suite" if not advice

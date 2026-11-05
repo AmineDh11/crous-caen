@@ -35,9 +35,11 @@ jobs:
           RUN_ONCE: "1"
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           RESIDENCE_FILTER: ${{ vars.RESIDENCE_FILTER }}
-          MAX_RENT_EUR: ${{ vars.MAX_RENT_EUR || '400' }}
-          # Pending request rent (0 = none). Lébisey studio request cancelled 04/11.
-          CURRENT_RENT_EUR: ${{ vars.CURRENT_RENT_EUR || '0' }}
+          MAX_RENT_EUR: ${{ vars.MAX_RENT_EUR || '300' }}
+          # Settled in the Lébisey studio: only alert for ⭐⭐⭐ rooms worth switching to
+          MIN_ALERT_SCORE: ${{ vars.MIN_ALERT_SCORE || '75' }}
+          # Pending request: Lébisey studio 1406 (sent 04/11). Set to 0 if it ends.
+          CURRENT_RENT_EUR: ${{ vars.CURRENT_RENT_EUR || '467.32' }}
           CURRENT_DIST_KM: "2.0"
           CURRENT_LABEL: "ton studio Lébisey"
         run: python crous_caen_watch.py
