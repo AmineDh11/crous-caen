@@ -2,28 +2,21 @@
  "tool": "48",
  "listings": [
   {
-   "id": 1431,
-   "label": "T1 BIS BACOT 30M CL",
+   "id": 2032,
+   "label": "T1 BACOT 20M",
    "area": {
-    "min": 30.0,
-    "max": 38.0
+    "min": 19.0,
+    "max": 31.0
    },
    "roomCount": 1,
-   "bedCount": 2,
+   "bedCount": 1,
    "adaptedPmr": false,
    "occupationModes": [
     {
-     "type": "house_sharing",
+     "type": "alone",
      "rent": {
-      "min": 21554,
-      "max": 21554
-     }
-    },
-    {
-     "type": "couple",
-     "rent": {
-      "min": 43117,
-      "max": 43117
+      "min": 37510,
+      "max": 37510
      }
     }
    ],
@@ -33,8 +26,18 @@
     "Evier + plaque",
     "Frigo"
    ],
-   "bookable": false,
-   "periods": [],
+   "bookable": true,
+   "periods": [
+    {
+     "arrivalDate": "2026-12-07T00:00:00+01:00",
+     "departureDate": "2027-06-30T00:00:00+02:00",
+     "quota": {
+      "id": 184,
+      "name": "Fil de l'eau"
+     },
+     "duration": 205
+    }
+   ],
    "residence": {
     "publicTransports": [
      {
