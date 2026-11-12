@@ -1,4 +1,67 @@
 {
  "tool": "48",
- "listings": []
+ "listings": [
+  {
+   "id": 1431,
+   "label": "T1 BIS BACOT 30M CL",
+   "area": {
+    "min": 30.0,
+    "max": 38.0
+   },
+   "roomCount": 1,
+   "bedCount": 2,
+   "adaptedPmr": false,
+   "occupationModes": [
+    {
+     "type": "house_sharing",
+     "rent": {
+      "min": 21554,
+      "max": 21554
+     }
+    },
+    {
+     "type": "couple",
+     "rent": {
+      "min": 43117,
+      "max": 43117
+     }
+    }
+   ],
+   "equipments": [
+    "WC",
+    "Douche",
+    "Evier + plaque",
+    "Frigo"
+   ],
+   "bookable": false,
+   "periods": [],
+   "residence": {
+    "publicTransports": [
+     {
+      "distance": 5,
+      "unitOfMeasure": "on_foot",
+      "description": "Lignes 10, 13, 14, arrêt Maréchal juin.\r\nRéseau de substitution du tram : Ligne  A et A+",
+      "publicTransport": {
+       "name": "Bus",
+       "id": "057fbe77-fa97-11e7-89ed-005056940822"
+      }
+     }
+    ],
+    "code": 5,
+    "uairne": "0142224S",
+    "address": "10 BD MARECHAL JUIN CS 25317 14053 CAEN CEDEX 4",
+    "location": {
+     "lon": -0.37,
+     "lat": 49.21
+    },
+    "sharedTransports": [],
+    "id": "b815c2db-5548-11e9-a02d-005056941f86",
+    "entity": {
+     "name": "Normandie",
+     "id": 24
+    },
+    "label": "RESIDENCE BACOT"
+   }
+  }
+ ]
 }
