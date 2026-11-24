@@ -22,7 +22,7 @@
    ],
    "equipments": [],
    "bookable": false,
-   "periods": null,
+   "periods": [],
    "residence": {
     "publicTransports": [
      {
