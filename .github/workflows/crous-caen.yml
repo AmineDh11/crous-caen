@@ -34,6 +34,8 @@ jobs:
         env:
           RUN_ONCE: "1"
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          # Backup: important alerts also arrive by email (Gmail notifies reliably)
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
           RESIDENCE_FILTER: ${{ vars.RESIDENCE_FILTER }}
           MAX_RENT_EUR: ${{ vars.MAX_RENT_EUR || '400' }}
           # Active search again (Lébisey request refused 10/11): alert for every room

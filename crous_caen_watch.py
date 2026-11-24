@@ -125,6 +125,8 @@ FAST_WEEKDAYS = range(0, 5)   # Monday..Friday
 
 NTFY_TOPIC = _env("NTFY_TOPIC", "crous-caen-CHANGE-ME")
 NTFY_URL = _env("NTFY_URL", "https://ntfy.sh")
+# Backup channel: ntfy also forwards important alerts (priority >= 4) by email.
+NOTIFY_EMAIL = _env("NOTIFY_EMAIL", "")
 
 INTERVAL_SECONDS = int(_env("INTERVAL_SECONDS", "180"))  # 3 min
 RUN_ONCE = _env("RUN_ONCE", "0") == "1"   # 1 cycle puis stop (GitHub Actions)
@@ -160,6 +162,8 @@ def notify(title: str, message: str, link: str | None = None,
         return
     body = {"topic": NTFY_TOPIC, "title": title, "message": message,
             "priority": priority, "tags": tags or []}
+    if NOTIFY_EMAIL and priority >= 4:
+        body["email"] = NOTIFY_EMAIL
     if link:
         body["click"] = link
         body["actions"] = [{"action": "view", "label": "Ouvrir l'annonce", "url": link}]
