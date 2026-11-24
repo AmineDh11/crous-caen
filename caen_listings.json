@@ -134,10 +134,10 @@
    }
   },
   {
-   "id": 2032,
-   "label": "T1 BACOT 20M",
+   "id": 3040,
+   "label": "STUDIO BACOT 20M",
    "area": {
-    "min": 19.0,
+    "min": 18.0,
     "max": 31.0
    },
    "roomCount": 1,
@@ -147,8 +147,8 @@
     {
      "type": "alone",
      "rent": {
-      "min": 37510,
-      "max": 37510
+      "min": 37738,
+      "max": 37738
      }
     }
    ],
@@ -161,13 +161,13 @@
    "bookable": true,
    "periods": [
     {
-     "arrivalDate": "2027-01-11T00:00:00+01:00",
+     "arrivalDate": "2026-12-01T00:00:00+01:00",
      "departureDate": "2027-06-30T00:00:00+02:00",
      "quota": {
       "id": 184,
       "name": "Fil de l'eau"
      },
-     "duration": 170
+     "duration": 211
     }
    ],
    "residence": {
